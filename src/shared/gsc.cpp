@@ -37,6 +37,7 @@ scr_method_t scriptMethods[] =
 	{"getViewOrigin", gsc_player_getViewOrigin, 0},
 	{"getStance", gsc_player_getStance, 0},
 	{"isUsingTurret", gsc_player_isUsingTurret, 0},
+	{"getReforgedTicket", gsc_player_getReforgedTicket, 0},
 
 	{"matchPlayerGetData", gsc_match_playerGetData, 0},
 	{"matchPlayerSetData", gsc_match_playerSetData, 0},

@@ -1,0 +1,53 @@
+name: Build Reforged Linux server library
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "CMakeLists.txt"
+      - "makefile"
+      - ".github/workflows/reforged-linux-build.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install 32-bit build dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install --yes \
+            cmake \
+            g++-multilib \
+            gcc-multilib \
+            libssl-dev:i386 \
+            ninja-build
+
+      - name: Build Linux release library
+        run: make build_linux DEBUG=0
+
+      - name: Verify artifact
+        run: |
+          file bin/linux/libCoD2x.so | tee libCoD2x.file.txt
+          grep -q "ELF 32-bit" libCoD2x.file.txt
+          sha256sum bin/linux/libCoD2x.so > libCoD2x.so.sha256
+
+      - name: Upload Reforged library
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCoD2x-reforged-linux-${{ github.sha }}
+          path: |
+            bin/linux/libCoD2x.so
+            libCoD2x.so.sha256
+            libCoD2x.file.txt
+          if-no-files-found: error
+          retention-days: 14

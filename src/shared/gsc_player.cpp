@@ -166,3 +166,44 @@ void gsc_player_isUsingTurret(scr_entref_t ref) {
 	else
 		Scr_AddBool(false);
 }
+
+/**
+ * Return the opaque Reforged one-time ticket supplied through match_login.
+ *
+ * This intentionally bypasses the CoD2x match subsystem: it only reads the
+ * already established client userinfo. Restricting the accepted value to the
+ * current 32-byte base64url encoding avoids exposing a generic userinfo getter
+ * to GSC code. The Worker remains authoritative and validates/consumes it.
+ */
+void gsc_player_getReforgedTicket(scr_entref_t ref) {
+	int id = ref.entnum;
+
+	if (id >= MAX_CLIENTS) {
+		Scr_Error(va("entity %d is not a player", id));
+		Scr_AddUndefined();
+		return;
+	}
+
+	client_t *client = &svs_clients[id];
+	const char *ticket = Info_ValueForKey(client->userinfo, "match_login");
+
+	if (ticket == nullptr || strlen(ticket) != 43) {
+		Scr_AddString("");
+		return;
+	}
+
+	for (const char *character = ticket; *character; character++) {
+		const bool valid =
+			(*character >= 'A' && *character <= 'Z') ||
+			(*character >= 'a' && *character <= 'z') ||
+			(*character >= '0' && *character <= '9') ||
+			*character == '-' || *character == '_';
+
+		if (!valid) {
+			Scr_AddString("");
+			return;
+		}
+	}
+
+	Scr_AddString(ticket);
+}
