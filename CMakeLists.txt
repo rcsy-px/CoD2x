@@ -4,6 +4,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(CoD2x LANGUAGES C CXX)
 
+option(REFORGED_MANAGED_CLIENT "Launcher-owned Windows client; no upstream updater/telemetry/IWD writes" OFF)
+if (REFORGED_MANAGED_CLIENT AND NOT WIN32)
+  message(FATAL_ERROR "REFORGED_MANAGED_CLIENT is Windows-client-only")
+endif()
+
 
 # -----------------------------------
 # Function that collects all files with given extensions from a base directory (recursively)
@@ -91,12 +96,27 @@ if (WIN32)
   )
 
   target_compile_features(mss32 PRIVATE cxx_std_17)
+  target_compile_definitions(mss32 PRIVATE REFORGED_MANAGED_CLIENT=$<BOOL:${REFORGED_MANAGED_CLIENT}>)
 
   set_target_properties(mss32 PROPERTIES
     PREFIX ""
     OUTPUT_NAME "mss32.build"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/windows"
   )
+
+  if (REFORGED_MANAGED_CLIENT)
+    # Never overwrite the regular/local game DLL with a managed build.
+    set_target_properties(mss32 PROPERTIES
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/managed")
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set(MSS32_SYMBOLS_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/managed_symbols_mss32.h")
+    if (NOT EXISTS "${MSS32_SYMBOLS_HEADER}")
+      configure_file(src/mss32/symbols_mss32.h "${MSS32_SYMBOLS_HEADER}" COPYONLY)
+    endif()
+    target_include_directories(mss32 PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/generated")
+  else()
+    set(MSS32_SYMBOLS_HEADER "${CMAKE_SOURCE_DIR}/src/mss32/symbols_mss32.h")
+  endif()
 
   target_include_directories(mss32 PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared"
@@ -137,7 +157,7 @@ if (WIN32)
       COMMAND powershell -ExecutionPolicy Bypass -File
           "${CMAKE_SOURCE_DIR}/src/other/generate_mss32_symbols_h.ps1"
           -DllPath "$<TARGET_FILE:mss32>"
-          -OutHdr  "${CMAKE_SOURCE_DIR}/src/mss32/symbols_mss32.h"
+          -OutHdr  "${MSS32_SYMBOLS_HEADER}"
           -NmExe   "${CMAKE_SOURCE_DIR}/tools/mingw/bin/nm.exe"
       COMMENT "Generating symbols_mss32.h"
       VERBATIM)

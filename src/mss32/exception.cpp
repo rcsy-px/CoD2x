@@ -17,7 +17,12 @@
 #include "../shared/logger.h"
 #include "symbols_cod2mp_s.h"
 #include "symbols_gfx_d3d_mp_x86_s.h"
+#include "../shared/managed_client.h"
+#if REFORGED_MANAGED_CLIENT
+#include "managed_symbols_mss32.h"
+#else
 #include "symbols_mss32.h"
+#endif
 
 #define EXCEPTION_TEST 0
 #define EXCEPTION_TEST_DELAY_MS 5000
@@ -273,7 +278,11 @@ static LRESULT CALLBACK exception_crashDlgProc(HWND hwnd, UINT msg, WPARAM wPara
 
         // Subtitle
         HWND hLabel = CreateWindowEx(0, "STATIC",
+#if REFORGED_MANAGED_CLIENT
+            "Saved locally; nothing was uploaded. Review personal data before sharing with Reforged support.",
+#else
             "Please send the text below on Discord to get help or report a bug. More info at https://cod2x.me/.",
+#endif
             WS_CHILD | WS_VISIBLE | SS_LEFT,
             textX, subtitleY, textW, subtitleH,
             hwnd, (HMENU)IDC_CRASH_LABEL, GetModuleHandle(NULL), NULL);
@@ -411,10 +420,15 @@ static LRESULT CALLBACK exception_crashDlgProc(HWND hwnd, UINT msg, WPARAM wPara
                     snprintf(dmpMsg, sizeof(dmpMsg),
                         "Diagnostic file '%s' saved into the CoD2 folder.\n"
                         "\n"
+#if REFORGED_MANAGED_CLIENT
+                        "Saved locally; nothing was uploaded.\n"
+                        "This dump may contain personal data. Review it before sharing with Reforged support.",
+#else
                         "Please send this file to the developers.\n"
                         "You can reach them on the Discord - more info at https://cod2x.me/.\n"
                         "\n"
                         "Without this file we would not have a chance to fix this problem. Thank you!",
+#endif
                         dmpPath);
                     MessageBoxA(hwnd, dmpMsg, "Crash Dump Saved", MB_OK | MB_ICONINFORMATION | MB_TOPMOST);
                 } else {

@@ -1,4 +1,5 @@
 #include "iwd.h"
+#include "managed_client.h"
 #include "shared.h"
 
 #include "http_client.h"
@@ -57,6 +58,7 @@ dvar_t* com_writeConfig = NULL;
 /**
  * Cleanup test zPAM files specified in a blacklist
  */
+#if !REFORGED_MANAGED_CLIENT
 static void iwd_processZpamFiles() {
 
     // Exit if not server
@@ -322,9 +324,17 @@ static void iwd_cleanupCoD2xIwdFiles() {
 }
 
 
+#endif // !REFORGED_MANAGED_CLIENT
+
 // Write embedded file if it doesn’t already exist
 void iwd_extractFiles(const char* out_path, const unsigned char* start, const unsigned char* end) {
     size_t size = (size_t)(end - start);
+#if REFORGED_MANAGED_CLIENT
+    if (!reforged_managed_iwd_matches(out_path, start, size)) {
+        Com_Error(ERR_FATAL, "Managed client IWD is missing or damaged. Close the game and use Install / repair in CoD2 Reforged Launcher.");
+    }
+    return;
+#else
 
     // Check if file already exists and has the correct size
     struct stat st;
@@ -354,6 +364,7 @@ void iwd_extractFiles(const char* out_path, const unsigned char* start, const un
         Com_Error(ERR_FATAL, "Error while extracting IWD file to '%s'. Error while writing to file: %s\n", out_path, strerror(errno));
         return;
     }
+#endif // REFORGED_MANAGED_CLIENT
 }
 
 /**
@@ -805,10 +816,12 @@ void FS_RegisterDvars() {
         // Com_RegisterDvars()
         ASM_CALL(RETURN_VOID, ADDR(0x00434040, 0x08061d90));
 
+#if !REFORGED_MANAGED_CLIENT
         // Cleanup old CoD2x IWD files that are no longer needed
         iwd_cleanupCoD2xIwdFiles();
 
         iwd_processZpamFiles();
+#endif
 
         // Extract embedded iw_CoD2x_01.iwd file into main folder
         iwd_extractIwdFileToMain("iw_CoD2x_01", EMBEDDED_FILE_SYMBOLS(iw_CoD2x_01_iwd));

@@ -408,3 +408,7 @@ It also runs patching process that modifies the game memory to fix some bugs and
 
 # Logo
 ![alt text](images/logo.png)
+## Reforged managed client build
+
+See [the managed client policy and build instructions](docs/MANAGED-CLIENT.md)
+for the separate launcher-owned Windows profile. Default builds are unchanged.

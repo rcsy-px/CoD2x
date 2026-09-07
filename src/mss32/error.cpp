@@ -1,4 +1,5 @@
 #include "error.h"
+#include "../shared/managed_client.h"
 
 #include <iostream>
 #include <string>
@@ -20,6 +21,11 @@ bool error_updaterCanResolve = false;
 
 
 
+#if REFORGED_MANAGED_CLIENT
+// Local reports/dialogs remain available; never automatically transmit them.
+void error_sendCrashData(unsigned int, unsigned int, const char*, unsigned int, const char*) {}
+void error_sendErrorData(const char*) {}
+#else
 void error_sendCrashData(unsigned int exceptionCode, unsigned int exceptionAddress, const char* moduleName, unsigned int fileOffset, const char* stackDump) {
     
     if (updater_address.type == NA_INIT && error_updaterCanResolve) {
@@ -91,6 +97,8 @@ void error_sendErrorData(const char* message) {
     }
 }
 
+#endif // REFORGED_MANAGED_CLIENT
+
 /** Called when a fatal error occurs. */
 int Sys_Error_MessageBoxA(HWND hWnd, LPCSTR lpText, LPCSTR lpCaption, UINT uType) {
     
@@ -115,7 +123,7 @@ void error_init() {
 
     // Init is called after the NET is initialized
     // Since the updater address is resolved after first frame, with this flag we can force the updater to resolve the address sooner
-    error_updaterCanResolve = true;
+    error_updaterCanResolve = !REFORGED_MANAGED_CLIENT;
 }
 
 /** Called before the entry point is called. Used to patch the memory. */

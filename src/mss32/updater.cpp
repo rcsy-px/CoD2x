@@ -1,4 +1,5 @@
 #include "updater.h"
+#include "../shared/managed_client.h"
 
 #include <windows.h>
 #include <wininet.h>
@@ -38,6 +39,30 @@ extern char hwid_changed_diff[1024];
 extern int hwid_changed_count;
 
 
+#if REFORGED_MANAGED_CLIENT
+// Keep all hook targets present, but compile out DNS, telemetry, download and
+// replacement code. Also safe for direct calls and unsolicited update packets.
+void updater_showForceUpdateDialog() {
+    Com_Error(ERR_DROP, "Client updates are managed by CoD2 Reforged Launcher. Close the game and use Install / repair.");
+}
+bool updater_downloadDLL(const char*, const char*, char* error, size_t size, int = 0) {
+    if (error && size) snprintf(error, size, "Client updates are managed by CoD2 Reforged Launcher.");
+    return false;
+}
+bool updater_downloadAndReplaceDllFile(const char*, char* error, size_t size) {
+    return updater_downloadDLL(nullptr, nullptr, error, size);
+}
+bool updater_resolveServerAddress() { return false; }
+bool updater_sendRequest() { return false; }
+void updater_updatePacketResponse(struct netaddr_s) {}
+void updater_dialogConfirmed() { updater_showForceUpdateDialog(); }
+void updater_checkForUpdate() {}
+void updater_renderer() {}
+void updater_frame() {}
+void updater_init() {
+    Com_Printf("Reforged managed client: launcher updates; upstream update and error reporting disabled.\n");
+}
+#else
 void updater_showForceUpdateDialog() {
     Com_Error(ERR_DROP, "Update required\n\nA new version of CoD2x must be installed.\nPlease update to version %s.\n", cl_updateVersion->value.string);
 }
@@ -440,6 +465,8 @@ void updater_frame() {
 void updater_init() {
     sv_update = Dvar_RegisterBool("sv_update", true, (dvarFlags_e)(DVAR_CHANGEABLE_RESET));
 }
+
+#endif // REFORGED_MANAGED_CLIENT
 
 /** Called before the entry point is called. Used to patch the memory. */
 void updater_patch() {
