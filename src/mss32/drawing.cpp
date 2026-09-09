@@ -1,4 +1,5 @@
 #include "drawing.h"
+#include "reforged_scoreboard.h"
 
 #include "../shared/cod2_client.h"
 #include "../shared/cod2_dvars.h"
@@ -256,6 +257,7 @@ void drawing_end(int num) {
     //UI_DrawText("CoD2x Mod", INT_MAX, fontNormal, 10.0f, 50.0f, HORIZONTAL_ALIGN_LEFT, VERTICAL_ALIGN_TOP, 1.0f, colWhite, TEXT_STYLE_NORMAL);
 
     demo_drawing();
+    reforged_scoreboard_end();
 
     uint32_t addr = *(uint32_t*)0x0068a2b8;
     ASM_CALL(RETURN_VOID, addr, 1, PUSH(num));
@@ -265,10 +267,12 @@ void drawing_end(int num) {
 
 /** Called every frame on frame start. */
 void drawing_frame() {
+    reforged_scoreboard_frame();
 }
 
 /** Called only once on game start after common inicialization. Used to initialize variables, cvars, etc. */
 void drawing_init() {
+    reforged_scoreboard_init();
     cg_drawSpectatedPlayerName = Dvar_RegisterBool("cg_drawSpectatedPlayerName", true, (enum dvarFlags_e)(DVAR_CHANGEABLE_RESET));
     cg_drawCompass = Dvar_RegisterBool("cg_drawCompass", true, (enum dvarFlags_e)(DVAR_CHANGEABLE_RESET));
     cg_hudCompassOffsetX = Dvar_RegisterFloat("cg_hudCompassOffsetX", 0.0f, -640.0f, 640.0f, (enum dvarFlags_e)(DVAR_CHANGEABLE_RESET));
@@ -281,6 +285,7 @@ void drawing_init() {
 
 /** Called before the entry point is called. Used to patch the memory. */
 void drawing_patch() {
+    reforged_scoreboard_patch();
     patch_call(0x004cbdce, (unsigned int)CG_DrawFollow);
 
     patch_call(0x004c6870, (unsigned int)CG_DrawPlayerCompass);
