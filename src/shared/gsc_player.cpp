@@ -4,6 +4,7 @@
 #include "cod2_common.h"
 #include "cod2_script.h"
 #include "cod2_server.h"
+#include "cod2_net.h"
 #include "cod2_player.h"
 
 
@@ -214,6 +215,10 @@ void gsc_player_rejectReforgedJoin(scr_entref_t ref) {
         Scr_Error("rejectReforgedJoin requires a player");
         return;
     }
-    SV_DropClient(&svs_clients[ref.entnum],
-        "CoD2 Reforged Launcher required.\nOpen the launcher, sign in with Discord and press PLAY.\nIf verification failed, close the game and try PLAY again.\nDownload: cod2reforged.com/downloads");
+    const char* reason = "CoD2 Reforged Launcher required. Sign in with Discord and press PLAY in the launcher. If verification failed, close the game and retry PLAY.";
+    // At the begin callback the first snapshot may not yet have reached the client.
+    // Use the engine's connection-error channel as well as the reliable drop reason.
+    NET_OutOfBandPrint(NS_SERVER, svs_clients[ref.entnum].netchan.remoteAddress,
+        va("error\n%s", reason));
+    SV_DropClient(&svs_clients[ref.entnum], reason);
 }
