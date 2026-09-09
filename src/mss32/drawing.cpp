@@ -1,5 +1,6 @@
 #include "drawing.h"
 #include "reforged_scoreboard.h"
+void reforged_avatar_frame();
 
 #include "../shared/cod2_client.h"
 #include "../shared/cod2_dvars.h"
@@ -268,6 +269,7 @@ void drawing_end(int num) {
 /** Called every frame on frame start. */
 void drawing_frame() {
     reforged_scoreboard_frame();
+    reforged_avatar_frame();
 }
 
 /** Called only once on game start after common inicialization. Used to initialize variables, cvars, etc. */
