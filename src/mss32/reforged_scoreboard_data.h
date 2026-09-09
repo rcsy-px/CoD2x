@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 namespace reforged_sb  {
+inline float centerOffset(float top,float bottom) { return 450.f-(top+bottom)*.5f; }
     struct Row  {
         int id=0,score=0,kills=0,deaths=0,assists=0,ping=0,level=0;
         bool verified=false,bot=false,alive=false;

@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace reforged_sb;
 int main(){
+for(int rows=0;rows<=16;++rows){float end=160+176+16+(std::min)(330.f,rows*50.f)+166;float offset=centerOffset(30,end);assert(30+offset>=0&&end+offset<=900);assert((30+offset+end+offset)*.5f==450.f);}
+
 Snapshot s;assert(header("RS1|1|2|british|5|3|90|100|LIVE|DEV EU-1|mp_toujane_fix|8|0|5|2|420|1",s));
 std::string a="0|A|5|5|2|1|30|15|1|0|1|Player";
 std::string b="1|G|9|9|1|0|12|40|1|1|0|bot1";

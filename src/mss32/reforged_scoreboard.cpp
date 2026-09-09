@@ -13,6 +13,7 @@ namespace  {
     DWORD updated=0,pulse=0;
     bool subscribed=false,valid=false,previousNext=false,previousBack=false;
     int page=0;
+    float verticalOffset=0;
     bool pending=false,wasActive=false;
     materialHandle_t *skin=nullptr,*logo=nullptr,*flagA=nullptr,*flagG=nullptr,*skull=nullptr,*ranks[9]= {
     }
@@ -31,7 +32,7 @@ namespace  {
     }
     ;
     void pic(float x,float y,float w,float h,vec4_t c,void* material) {
-        UI_DrawHandlePic(x*.4f,y*(480.f/900),w*.4f,h*(480.f/900),4,4,c,material);
+        UI_DrawHandlePic(x*.4f,(y+verticalOffset)*(480.f/900),w*.4f,h*(480.f/900),4,4,c,material);
     }
     void box(float x,float y,float w,float h,float r,float g,float b,float a) {
         vec4_t c= {
@@ -46,7 +47,7 @@ namespace  {
     void text(const std::string& s,float x,float y,float scale=.26f,vec4_t color=ivory,bool right=false) {
         float px=x*.4f;
         if(right)px-=UI_TextWidth(s.c_str(),s.size(),fontNormal,scale);
-        UI_DrawText(s.c_str(),s.size(),fontNormal,px,y*(480.f/900),HORIZONTAL_ALIGN_FULLSCREEN,VERTICAL_ALIGN_FULLSCREEN,scale,color,TEXT_STYLE_SHADOWED);
+        UI_DrawText(s.c_str(),s.size(),fontNormal,px,(y+verticalOffset)*(480.f/900),HORIZONTAL_ALIGN_FULLSCREEN,VERTICAL_ALIGN_FULLSCREEN,scale,color,TEXT_STYLE_SHADOWED);
     }
     std::string fit(std::string s,float width,float scale=.26f) {
         if(UI_TextWidth(s.c_str(),s.size(),fontNormal,scale)<=width*.4f)return s;
@@ -85,7 +86,7 @@ namespace  {
         logo=CG_RegisterMaterial("rfg_logo",MATERIAL_TYPE_DEFAULT);
         skull=CG_RegisterMaterial("rfg_kill",MATERIAL_TYPE_DEFAULT);
         flagG=CG_RegisterMaterial("hud_flag_german",MATERIAL_TYPE_DEFAULT);
-        flagA=CG_RegisterMaterial(("hud_flag_"+snapshot.nation).c_str(),MATERIAL_TYPE_DEFAULT);
+        flagA=CG_RegisterMaterial(("hud_flag_"+(snapshot.nation.empty()?std::string("british"):snapshot.nation)).c_str(),MATERIAL_TYPE_DEFAULT);
         for(int i=0;i<9;++i) {
             char n[16];
             snprintf(n,sizeof(n),"rfg_rk%02d",i);
@@ -149,12 +150,36 @@ namespace  {
         return result;
     }
     int render() {
-        if(!valid||Dvar_GetInt("ui_rf_sb_version")!=1||GetTickCount()-updated>5000)return original();
+        if(Dvar_GetInt("ui_rf_sb_version")!=1)return original();
         if(!*(int*)0x015195b4)return 0;
         dvar_t* paused=*(dvar_t**)0x0166e01c;
         if(paused&&paused->value.integer)return 0;
         materials();
-        box(0,820,1600,80,0,0,0,.9f);
+        verticalOffset=0;
+        if(!valid||GetTickCount()-updated>5000) {
+            panel(394,112);
+            text("REFORGED SCOREBOARD",145,440,.30f,gold);
+            text(valid?"Updating match data...":"Loading match data...",145,477,.24f,muted);
+            return 1;
+        }
+        std::vector<Row>a,b;
+        std::string spectators;
+        for(const Row&r:snapshot.rows) {
+            if(r.team=='A')a.push_back(r);
+            else if(r.team=='G')b.push_back(r);
+            else {
+                if(!spectators.empty())spectators+=", ";
+                spectators+=r.name;
+            }
+        }
+        Layout l=layout(a.size(),b.size());
+        page=(std::min)(page,l.pages-1);
+        float h=(std::min)(50.f,330.f/(std::max)(1,l.a+l.b));
+        int visibleA=(std::max)(0,(std::min)(l.a,(int)a.size()-page*l.a));
+        int visibleB=(std::max)(0,(std::min)(l.b,(int)b.size()-page*l.b));
+        float contentBottom=160+88+88+16+(visibleA+visibleB)*h+166;
+        verticalOffset=centerOffset(30,contentBottom);
+
         panel(30,112);
         pic(130,43,175,85,ivory,logo);
         text(snapshot.server,337,70,.30f,gold);
@@ -176,19 +201,6 @@ namespace  {
         }
         text(clock,1030,108,.29f);
         text(snapshot.limit>0?"LIMIT "+number(snapshot.limit):"NO SCORE LIMIT",1455,108,.21f,muted,true);
-        std::vector<Row>a,b;
-        std::string spectators;
-        for(const Row&r:snapshot.rows) {
-            if(r.team=='A')a.push_back(r);
-            else if(r.team=='G')b.push_back(r);
-            else {
-                if(!spectators.empty())spectators+=", ";
-                spectators+=r.name;
-            }
-        }
-        Layout l=layout(a.size(),b.size());
-        page=(std::min)(page,l.pages-1);
-        float h=(std::min)(50.f,330.f/(std::max)(1,l.a+l.b));
         float bottom=team(a,false,160,l.a,h);
         bottom=team(b,true,bottom+16,l.b,h);
         panel(bottom+16,94);
@@ -200,14 +212,15 @@ namespace  {
         text(std::string("YOUR K/D  ")+kd,136,bottom+85,.23f,gold);
         text("DAMAGE  "+number(snapshot.damage),625,bottom+85,.23f);
         text("HEADSHOTS  "+number(snapshot.headshots),1455,bottom+85,.23f,ivory,true);
-        text("HOLD TAB TO VIEW SCOREBOARD",112,858,.19f,muted);
-        if(l.pages>1)text("PAGE "+std::to_string(page+1)+" / "+std::to_string(l.pages)+"    PGUP / PGDN",1488,858,.20f,gold,true);
-        else text("CLASSIC COMBAT. REFORGED.",1488,858,.19f,muted,true);
+        box(112,bottom+122,1376,44,0,0,0,.9f);
+        text("HOLD TAB TO VIEW SCOREBOARD",132,bottom+151,.19f,muted);
+        if(l.pages>1)text("PAGE "+std::to_string(page+1)+" / "+std::to_string(l.pages)+"    PGUP / PGDN",1468,bottom+151,.20f,gold,true);
+        else text("CLASSIC COMBAT. REFORGED.",1468,bottom+151,.19f,muted,true);
         return 1;
     }
     int draw() {
         pending=false;
-        if(!valid||Dvar_GetInt("ui_rf_sb_version")!=1||GetTickCount()-updated>5000)return original();
+        if(Dvar_GetInt("ui_rf_sb_version")!=1)return original();
         dvar_t* paused=*(dvar_t**)0x0166e01c;
         if(!*(int*)0x015195b4||(paused&&paused->value.integer))return 0;
         pending=true;
