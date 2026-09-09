@@ -154,7 +154,6 @@ namespace  {
         dvar_t* paused=*(dvar_t**)0x0166e01c;
         if(paused&&paused->value.integer)return 0;
         materials();
-        box(0,0,1600,900,0,0,0,.72f);
         box(0,820,1600,80,0,0,0,.9f);
         panel(30,112);
         pic(130,43,175,85,ivory,logo);
