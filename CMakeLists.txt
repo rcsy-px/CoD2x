@@ -36,9 +36,8 @@ find_files_by_extension(SHARED_SRC "src/shared" c cpp)
 
 
 # Define files to embed
-set(EMBED_FILES
-    ${CMAKE_SOURCE_DIR}/src/embedded/iw_CoD2x_01.iwd
-)
+set(REFORGED_CLIENT_IWD "${CMAKE_SOURCE_DIR}/src/embedded/iw_CoD2x_01.iwd" CACHE FILEPATH "Reviewed embedded client IWD")
+set(EMBED_FILES "${REFORGED_CLIENT_IWD}")
 
 # Pick objcopy output format depending on platform
 if(WIN32)

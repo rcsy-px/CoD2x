@@ -1,5 +1,34 @@
 # Reforged managed Windows client
 
+## Current release preparation (2026-09-09)
+
+The current source uses the accepted static connection artwork and native map
+splash. The retired RoQ video prototype is excluded from this build; a private
+backup remains in build/release-preparation-20260909. The old binary/IWD/symbol
+working-tree changes remain untouched and must not be committed as release inputs.
+
+Rebuild the IWD from the pinned upstream Git blob and the two reviewed custom
+assets under src/reforged-assets (never from a played game installation):
+
+```powershell
+../cod2/.venv/Scripts/python tools/build_reforged_iwd.py --git PATH_TO_GIT_EXE --output build/NEW_BUILD/iw_CoD2x_01.iwd
+powershell -File tools/build_managed_client.ps1 -ClientIwd build/NEW_BUILD/iw_CoD2x_01.iwd
+../cod2/.venv/Scripts/python tests/test_managed_client.py
+```
+
+Use a new output path; the recipe refuses existing output. Member order, timestamps,
+permissions and compression are fixed. CMake accepts the explicit reviewed IWD
+path; the managed helper requires it and binds that exact IWD into the policy.
+The old commands below describe the historical first candidate.
+
+The newly built DLL and all nine IWD members passed targeted local-identifier and
+retired updater/telemetry/video string checks. Evidence is private under
+build/release-preparation-20260909/privacy-audit.json. This does not replace full
+malware scans or fresh-user/gameplay acceptance. Source asset provenance: the
+previously accepted Reforged static connection artwork, unchanged in content;
+original seven upstream IWD members are unchanged in content.
+
+
 Implemented 2026-09-07 on develop. This is a separate build profile for client
 packages owned by CoD2 Reforged Launcher. Default CoD2x builds keep their existing
 behavior; Linux game servers are unaffected. A dvar, remote server command or
