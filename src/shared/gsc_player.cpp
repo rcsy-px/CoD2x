@@ -207,3 +207,13 @@ void gsc_player_getReforgedTicket(scr_entref_t ref) {
 
 	Scr_AddString(ticket);
 }
+
+// Server-authoritative admission failure. Fixed text, no player-controlled command.
+void gsc_player_rejectReforgedJoin(scr_entref_t ref) {
+    if (ref.entnum >= MAX_CLIENTS) {
+        Scr_Error("rejectReforgedJoin requires a player");
+        return;
+    }
+    SV_DropClient(&svs_clients[ref.entnum],
+        "CoD2 Reforged Launcher required.\nOpen the launcher, sign in with Discord and press PLAY.\nIf verification failed, close the game and try PLAY again.\nDownload: cod2reforged.com/downloads");
+}

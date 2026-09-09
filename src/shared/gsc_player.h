@@ -16,3 +16,5 @@ void gsc_player_frame();
 void gsc_player_init();
 
 #endif
+
+void gsc_player_rejectReforgedJoin(scr_entref_t ref);
