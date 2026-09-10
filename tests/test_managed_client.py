@@ -57,6 +57,11 @@ def main():
             "-ffunction-sections", "-fdata-sections", "tests/material_diagnostics.cpp",
             "-Itools/openssl_mingw/include", "-Wl,--gc-sections", "-static", "-o", material_exe)
         print(run(material_exe, temp).strip())
+        loading_exe = temp / "loading-map-material.exe"
+        run(args.compiler, "-std=c++17", "-m32", "-O2", "-static",
+            "tests/loading_map_material.cpp", "-o", loading_exe)
+        print(run(loading_exe).strip())
+
 
 
     print("PASS: managed object code excludes updater/network telemetry sinks")

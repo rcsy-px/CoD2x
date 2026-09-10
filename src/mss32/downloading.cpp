@@ -1,4 +1,5 @@
 #include "downloading.h"
+#include "loading_map_material.h"
 
 #include "drawing.h"
 #include "shared.h"
@@ -62,7 +63,7 @@ void UI_DrawConnectionOrMapLoadingScreen() {
 
     if (loadingMapName[0] != '\0' && clientState >= CLIENT_STATE_CONNECTED) {
         char mapMaterialName[96];
-        snprintf(mapMaterialName, sizeof(mapMaterialName), "loadscreen_%s", loadingMapName);
+        snprintf(mapMaterialName, sizeof(mapMaterialName), "loadscreen_%s", loading_map_material_name(loadingMapName));
         UI_DrawFullscreenMaterial(mapMaterialName);
         return;
     }
