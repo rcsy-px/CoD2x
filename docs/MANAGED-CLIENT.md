@@ -1,3 +1,17 @@
+# Avatar renderer restart fix (2026-09-10)
+
+The gfx DLL load hook now invalidates avatar material/texture handles before
+calling the engine loader. A same-map vid_restart previously left a stale material
+pointer, crashing in reforged_avatar_frame -> strcmp. Reset also clears the upload
+identity, so a reused texture address cannot suppress re-upload; decoded pixels
+and network retry state survive. The material name is null-checked as well.
+Native regression is included in tests/test_managed_client.py and tests repeated
+reset with invalid sentinel addresses, address reuse and preservation of pixels.
+Two-pass managed Release build passed; unchanged reviewed embedded IWD.
+Only the isolated developer copy is staged, with its matching policy. Installed
+launcher-managed sequence 3 and public R2 remain unchanged pending real in-game
+resolution/fullscreen switching acceptance and the standard scanned release gate.
+
 # Reforged managed Windows client
 
 ## Current release preparation (2026-09-09)

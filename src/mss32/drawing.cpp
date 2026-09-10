@@ -1,6 +1,6 @@
 #include "drawing.h"
 #include "reforged_scoreboard.h"
-void reforged_avatar_frame();
+#include "reforged_avatar.h"
 
 #include "../shared/cod2_client.h"
 #include "../shared/cod2_dvars.h"

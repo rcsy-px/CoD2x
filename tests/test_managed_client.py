@@ -37,6 +37,14 @@ def main():
         run(args.compiler, "-m32", *objects, "-Wl,--gc-sections",
             "-static", "-static-libgcc", "-static-libstdc++", "-o", exe)
         print(run(exe, temp).strip())
+        avatar_exe = temp / "avatar-renderer-reset.exe"
+        run(args.compiler, "-std=c++17", "-m32", "-msse2", "-O2",
+            "-ffunction-sections", "-fdata-sections", "tests/avatar_renderer_reset.cpp",
+            "-Wl,--gc-sections", "-static", "-lwininet", "-lole32", "-lwindowscodecs",
+            "-o", avatar_exe)
+        run(avatar_exe)
+        print("PASS: avatar renderer reset drops stale handles and preserves decoded pixels")
+
     print("PASS: managed object code excludes updater/network telemetry sinks")
     for rel in ("src/mss32/updater.cpp", "src/mss32/error.cpp", "src/shared/iwd.cpp"):
         run(args.compiler, "-std=c++17", "-m32", "-w", "-DREFORGED_MANAGED_CLIENT=0",

@@ -23,6 +23,7 @@
 #include "hwid.h"
 #include "radar.h"
 #include "drawing.h"
+#include "reforged_avatar.h"
 #include "master_server.h"
 #include "error.h"
 #include "downloading.h"
@@ -126,6 +127,8 @@ void hook_Com_Frame()
  * Is called only is dedicated = 0
  */
 int hook_gfxDll() {
+    // Invalidate before loading the new renderer: addresses may be reused.
+    reforged_avatar_renderer_reset();
     logger_add("Loading gfx_d3d_mp_x86_s.dll...");
 
     // Call the original function

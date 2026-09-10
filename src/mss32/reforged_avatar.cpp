@@ -1,4 +1,5 @@
 #include "drawing.h"
+#include "reforged_avatar.h"
 #include "shared.h"
 #include "../shared/cod2_client.h"
 #include "../shared/cod2_dvars.h"
@@ -97,11 +98,20 @@ Avatar download(std::string ref) {
 }
 }
 
+// Renderer-owned pointers cannot survive vid_restart, even on the same map.
+// Keep decoded pixels/network state: the next active frame uploads without fetching.
+void reforged_avatar_renderer_reset() {
+    material=nullptr;
+    uploadedTexture=nullptr;
+    uploadedRef.clear();
+    checkedAt=0;
+}
+
 // Called on the render/game thread. Only the private rfg_av00 UI image is touched.
 void reforged_avatar_frame() {
-    if(clientState!=CLIENT_STATE_ACTIVE){material=nullptr;uploadedTexture=nullptr;map.clear();return;}
+    if(clientState!=CLIENT_STATE_ACTIVE){reforged_avatar_renderer_reset();map.clear();return;}
     std::string currentMap=(char*)0x0196ffa0;
-    if(map!=currentMap){map=currentMap;material=nullptr;uploadedTexture=nullptr;}
+    if(map!=currentMap){map=currentMap;reforged_avatar_renderer_reset();}
     if(GetTickCount()-checkedAt<250)return;
     checkedAt=GetTickCount();
     std::string ref=Dvar_GetString("ui_rf_avatar_ref");
@@ -118,7 +128,9 @@ void reforged_avatar_frame() {
     if(cached.ref!=ref||cached.pixels.size()!=256*256*4)return;
     if(!material)material=CG_RegisterMaterial("rfg_av00",MATERIAL_TYPE_DEFAULT);
     const unsigned char* mat=(const unsigned char*)material;
-    if(!mat||std::strcmp(*(const char**)mat,"rfg_av00")!=0||*(const unsigned short*)(mat+0x34)!=1)return;
+    if(!mat)return;
+    const char* name=*(const char* const*)mat;
+    if(!name||std::strcmp(name,"rfg_av00")!=0||*(const unsigned short*)(mat+0x34)!=1)return;
     const unsigned char* table=*(const unsigned char* const*)(mat+0x3c);
     if(!table)return;
     const unsigned char* img=*(const unsigned char* const*)(table+8);
