@@ -104,6 +104,9 @@ if (WIN32)
   )
 
   if (REFORGED_MANAGED_CLIENT)
+    # Release diagnostics must not embed workstation source/build paths.
+    target_compile_options(mss32 PRIVATE
+      "$<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:-ffile-prefix-map=${CMAKE_SOURCE_DIR}=/build/cod2x>")
     # Never overwrite the regular/local game DLL with a managed build.
     set_target_properties(mss32 PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/managed")

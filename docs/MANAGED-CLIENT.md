@@ -1,3 +1,15 @@
+# Managed release build path privacy (2026-09-10)
+
+Managed C/C++ compile flags now map the source tree prefix to /build/cod2x with
+-ffile-prefix-map. This removes workstation paths embedded by __FILE__ diagnostics;
+the same seven paths existed in the previous approved binary. They are not exempted
+from the new privacy review. Two-pass build passes, targeted UTF-8/UTF-16 checks
+find no local username/home/workspace markers in the new DLL/policy. Gameplay code
+is the user-accepted b81f2ad. Final DLL SHA256:
+3c3b6a48e8151ef6911ac330502d505969afc8c818240eba183b922a81d61026.
+Candidate dev-managed-20260910-4 is built from clean approved source; never played.
+Publication still requires scans and the R2 quota gate, not implied by this build.
+
 # Scoreboard renderer reload follow-up (2026-09-10)
 
 The scoreboard now invalidates every cached material on gfx reload, cancels a
