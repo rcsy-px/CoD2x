@@ -2,6 +2,7 @@
 
 #include <winsock2.h> // must be called before windows.h to fix warning about winsock2.h
 #include <windows.h>
+#include "material_diagnostics.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -147,6 +148,7 @@ int hook_gfxDll() {
     // Patch gfx_d3d_mp_x86_s.dll
     ///////////////////////////////////////////////////////////////////
 
+    material_diagnostics::install(gfx_module_addr);
     window_rendered();
     updater_renderer();
 

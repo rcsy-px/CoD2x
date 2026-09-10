@@ -52,6 +52,13 @@ def main():
 
         print("PASS: avatar renderer reset drops stale handles and preserves decoded pixels")
 
+        material_exe = temp / "material-diagnostics.exe"
+        run(args.compiler, "-std=c++17", "-m32", "-O2",
+            "-ffunction-sections", "-fdata-sections", "tests/material_diagnostics.cpp",
+            "-Itools/openssl_mingw/include", "-Wl,--gc-sections", "-static", "-o", material_exe)
+        print(run(material_exe, temp).strip())
+
+
     print("PASS: managed object code excludes updater/network telemetry sinks")
     for rel in ("src/mss32/updater.cpp", "src/mss32/error.cpp", "src/shared/iwd.cpp"):
         run(args.compiler, "-std=c++17", "-m32", "-w", "-DREFORGED_MANAGED_CLIENT=0",
