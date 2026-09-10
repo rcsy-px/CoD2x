@@ -24,6 +24,7 @@
 #include "radar.h"
 #include "drawing.h"
 #include "reforged_avatar.h"
+#include "reforged_scoreboard.h"
 #include "master_server.h"
 #include "error.h"
 #include "downloading.h"
@@ -129,6 +130,7 @@ void hook_Com_Frame()
 int hook_gfxDll() {
     // Invalidate before loading the new renderer: addresses may be reused.
     reforged_avatar_renderer_reset();
+    reforged_scoreboard_renderer_reset();
     logger_add("Loading gfx_d3d_mp_x86_s.dll...");
 
     // Call the original function

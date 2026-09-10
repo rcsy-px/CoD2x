@@ -1,3 +1,15 @@
+# Scoreboard renderer reload follow-up (2026-09-10)
+
+The scoreboard now invalidates every cached material on gfx reload, cancels a
+pending draw, and renews the TAB subscription while retaining its valid snapshot.
+The verified badge uses a readable label instead of two subpixel rotated strokes.
+Native reset regressions, managed safety checks and scoreboard parser/all 2145
+team-layout checks pass. Two-pass Release build completed. Matching DLL/policy
+staged only to the fixed developer client; public managed sequence 3 is unchanged.
+Dev server IWD v65 separately fixes full-screen custom menu rect alignment and
+preserves a rank supplied by admission before the scoreboard connected listener.
+Actual same-map resolution-change acceptance remains required.
+
 # Avatar renderer restart fix (2026-09-10)
 
 The gfx DLL load hook now invalidates avatar material/texture handles before

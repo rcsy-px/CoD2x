@@ -43,6 +43,13 @@ def main():
             "-Wl,--gc-sections", "-static", "-lwininet", "-lole32", "-lwindowscodecs",
             "-o", avatar_exe)
         run(avatar_exe)
+        scoreboard_exe = temp / "scoreboard-renderer-reset.exe"
+        run(args.compiler, "-std=c++17", "-m32", "-msse2", "-O2",
+            "-ffunction-sections", "-fdata-sections", "tests/scoreboard_renderer_reset.cpp",
+            "-Wl,--gc-sections", "-static", "-o", scoreboard_exe)
+        run(scoreboard_exe)
+        print("PASS: scoreboard renderer reset drops every material and renews subscription")
+
         print("PASS: avatar renderer reset drops stale handles and preserves decoded pixels")
 
     print("PASS: managed object code excludes updater/network telemetry sinks")

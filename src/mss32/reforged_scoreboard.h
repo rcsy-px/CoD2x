@@ -4,3 +4,5 @@ void reforged_scoreboard_frame();
 void reforged_scoreboard_patch();
 
 void reforged_scoreboard_end();
+
+void reforged_scoreboard_renderer_reset();

@@ -148,9 +148,10 @@ namespace  {
                 box(badgeX-3,baseline-19,49,22,.65f,.65f,.59f,.3f);
                 text("BOT",badgeX,baseline,.18f,ivory);
             } else if(r.verified) {
-                vec4_t checkColor={own?.9f:.48f,own?.72f:.67f,own?.34f:.84f,1};
-                CG_DrawRotatedPic((badgeX+2)*.4f,(baseline-8)*(480.f/900),5*.4f,2*(480.f/900),HORIZONTAL_ALIGN_FULLSCREEN,VERTICAL_ALIGN_FULLSCREEN,45,checkColor,shaderWhite);
-                CG_DrawRotatedPic((badgeX+5)*.4f,(baseline-11)*(480.f/900),11*.4f,2*(480.f/900),HORIZONTAL_ALIGN_FULLSCREEN,VERTICAL_ALIGN_FULLSCREEN,-45,checkColor,shaderWhite);
+                // A readable label remains clear at small resolutions and avoids
+                // subpixel rotated strokes stretching with the screen aspect.
+                box(badgeX-3,baseline-18,104,22,.18f,.31f,.23f,.85f);
+                text("VERIFIED",badgeX,baseline,.16f,ivory);
             }
             int values[]= {
                 r.score,r.kills,r.deaths,r.assists,r.bot?-1:nativePing(r.id)
@@ -251,6 +252,15 @@ namespace  {
         pending=true;
         return 1;
     }
+}
+void reforged_scoreboard_renderer_reset() {
+    // All handles belong to the old renderer, including flags and rank images.
+    skin=logo=flagA=flagG=skull=nullptr;
+    for(auto& rank:ranks)rank=nullptr;
+    pending=false;
+    subscribed=false;
+    pulse=0;
+    // Keep the last valid server snapshot while requesting a fresh one on TAB.
 }
 void reforged_scoreboard_end() {
     if(pending) {
