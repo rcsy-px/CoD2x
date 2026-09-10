@@ -1,0 +1,372 @@
+#include "ui/menudef.h"
+
+#define MAIN_RECT_X			385
+#define MAIN_RECT_WIDTH		210
+#define MAIN_RECT_HEIGHT	20
+#define MAIN_RECT_HORZALIGN	HORIZONTAL_ALIGN_DEFAULT
+#define MAIN_RECT_VERTALIGN	VERTICAL_ALIGN_DEFAULT
+#define MAIN_TEXTSCALE		.4
+#define MAIN_TEXTALIGN		0
+#define	MAIN_TEXTALIGN_X	0
+#define MAIN_TEXTALIGN_Y	20
+#define MAIN_FORECOLOR		.9 .9 .9 .9
+
+{
+	assetGlobalDef // global not per file settings
+	{
+		consoleFont "fonts/consoleFont" 18		// font
+		smallFont "fonts/smallFont" 12			// font
+		font "fonts/normalFont" 16				// font
+		bigFont "fonts/bigFont" 24				// font
+		extraBigFont "fonts/extraBigFont" 32	// font
+		boldFont "fonts/boldFont" 30			// font
+		cursor "ui/assets/3_cursor3"			// cursor
+		gradientBar "ui/assets/gradientbar2.tga"	// gradient bar
+		itemFocusSound	"sound/misc/menu2.wav"		// sound for item getting focus (via keyboard or mouse )
+	}
+
+	assetGlobalDef
+	{
+		fadeClamp 1.0				// sets the fadeup alpha
+		fadeCycle 1					// how often fade happens in milliseconds
+		fadeAmount 0.1				// amount to adjust alpha per cycle
+		
+		shadowColor 0.1 0.1 0.1 0.25			// shadow color
+	}
+
+	menuDef 
+	{
+		name			main
+		fullScreen		1				
+		rect			0 0 640 480 4 4		// Size and position of the menu
+		focusColor		GLOBAL_FOCUSED_COLOR		// Menu focus color for text and items
+		//COD2X: soundloop "music_mainmenu_mp"
+		onOpen
+		{ 
+			close bg;
+			close main_text;
+
+			open bg;
+			open main_text;
+			
+			uiScript addPlayerProfiles;
+			uiScript openMenuOnDvar com_playerProfile "" player_profile;
+			uiScript openMenuOnDvarNot ui_playerProfileCount 1 player_profile;
+		}
+		onClose
+		{
+			close bg;
+			close main_text;
+		}
+		onESC 
+		{
+		}
+	}
+ // Reforged main menu: art is decorative; all controls are native UI buttons.
+ menuDef {
+ name "main_text" fullScreen 0 rect 0 0 640 480 4 4
+ focusColor 1 .84 .42 1
+ onOpen {
+  setdvar ui_background "rfg_mnbg";
+  setdvar ui_logo_show "0"; setdvar ui_version_show "0";
+  setdvar ui_separator_show "0"; setdvar ui_background_gradient_show "0";
+  uiScript stopRefresh;
+ }
+ onESC { close mods_menu; close options_multi; ingameclose main; }
+ onClose { close mods_menu; close options_multi; close rfg_launcher_join; }
+ itemDef { decoration visible 1 rect 0.000 0.000 640.000 480.000 4 4 style WINDOW_STYLE_SHADER background "rfg_mnbg" forecolor 1 1 1 1 }
+ itemDef { decoration visible 1 rect 0.000 0.000 640.000 53.560 4 4 style WINDOW_STYLE_SHADER background "white" forecolor 0 0 0 .38 }
+ itemDef { decoration visible 1 rect 0.000 427.970 640.000 52.030 4 4 style WINDOW_STYLE_SHADER background "white" forecolor 0 0 0 .4 }
+ itemDef { decoration visible 1 rect 0.000 53.050 640.000 0.510 4 4 style WINDOW_STYLE_SHADER background "white" forecolor .67 .53 .29 .65 }
+ itemDef { decoration visible 1 rect 0.000 427.970 640.000 0.510 4 4 style WINDOW_STYLE_SHADER background "white" forecolor .67 .53 .29 .65 }
+ itemDef { decoration visible 1 rect 16.077 12.242 229.665 15.303 4 4 text "SAME BATTLEFIELDS." textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 16.077 27.035 248.804 15.303 4 4 text "A STRONGER TOMORROW." textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 474.641 14.283 160.766 15.303 4 4 text "TOUJANE, NORTH AFRICA" textfont UI_FONT_NORMAL textscale .18 textaligny 12 forecolor .66 .62 .50 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 474.641 27.545 160.766 15.303 4 4 text "APRIL 1943" textfont UI_FONT_NORMAL textscale .18 textaligny 12 forecolor .66 .62 .50 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 417.225 72.434 181.818 121.148 4 4 style WINDOW_STYLE_SHADER background "rfg_mnlg" forecolor 1 1 1 1 }
+ itemDef { decoration visible 1 rect 16.077 368.289 267.943 15.303 4 4 text "GOOD SOLDIERS" textfont UI_FONT_NORMAL textscale .29 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 16.077 386.142 267.943 15.303 4 4 text "FOLLOW ORDERS." textfont UI_FONT_NORMAL textscale .29 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 16.077 405.016 183.732 15.303 4 4 text "- CAPT. PRICE" textfont UI_FONT_NORMAL textscale .19 textaligny 12 forecolor .70 .64 .49 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 478.469 447.864 155.024 15.303 4 4 text "CLASSIC COMBAT. REFORGED." textfont UI_FONT_NORMAL textscale .16 textaligny 12 forecolor .67 .64 .54 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef {
+  name "join" visible 1 rect 419.139 197.407 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "JOIN REFORGED SERVER" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED dvarTest "cl_ingame" showDvar { "0" }
+  mouseEnter { play "mouse_over"; setitemcolor join backcolor .68 .49 .17 .26; setitemcolor join bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor join backcolor .68 .49 .17 0; setitemcolor join bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; open rfg_launcher_join; }
+ }
+ itemDef {
+  name "resume" visible 1 rect 419.139 197.407 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "RETURN TO BATTLE" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED dvarTest "cl_ingame" showDvar { "1" }
+  mouseEnter { play "mouse_over"; setitemcolor resume backcolor .68 .49 .17 .26; setitemcolor resume bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor resume backcolor .68 .49 .17 0; setitemcolor resume bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close main; }
+ }
+ itemDef {
+  name "profile" visible 1 rect 419.139 229.033 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "SELECT PROFILE" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED dvarTest "cl_ingame" showDvar { "0" }
+  mouseEnter { play "mouse_over"; setitemcolor profile backcolor .68 .49 .17 .26; setitemcolor profile bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor profile backcolor .68 .49 .17 0; setitemcolor profile bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; setdvar ui_playerProfileAlreadyChosen 0; open player_profile; }
+ }
+ itemDef {
+  name "profile_ingame" visible 1 rect 419.139 229.033 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "SELECT PROFILE" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED dvarTest "cl_ingame" showDvar { "1" }
+  mouseEnter { play "mouse_over"; setitemcolor profile_ingame backcolor .68 .49 .17 .26; setitemcolor profile_ingame bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor profile_ingame backcolor .68 .49 .17 0; setitemcolor profile_ingame bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; open player_profile_ingame_warning; }
+ }
+ itemDef {
+  name "multiplayer" visible 1 rect 419.139 260.659 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "MULTIPLAYER OPTIONS" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor multiplayer backcolor .68 .49 .17 .26; setitemcolor multiplayer bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor multiplayer backcolor .68 .49 .17 0; setitemcolor multiplayer bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close mods_menu; open options_multi; }
+ }
+ itemDef {
+  name "settings" visible 1 rect 419.139 292.285 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "OPTIONS" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor settings backcolor .68 .49 .17 .26; setitemcolor settings bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor settings backcolor .68 .49 .17 0; setitemcolor settings bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close mods_menu; close main_text; open options_menu; }
+ }
+ itemDef {
+  name "mods" visible 1 rect 419.139 323.911 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "MODS" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor mods backcolor .68 .49 .17 .26; setitemcolor mods bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor mods backcolor .68 .49 .17 0; setitemcolor mods bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close options_multi; open mods_menu; }
+ }
+ itemDef {
+  name "quit" visible 1 rect 419.139 355.537 177.225 28.565 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "QUIT" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor quit backcolor .68 .49 .17 .26; setitemcolor quit bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor quit backcolor .68 .49 .17 0; setitemcolor quit bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close mods_menu; close options_multi; open quit_popmenu; }
+ }
+ itemDef { decoration visible 1 rect 581.435 203.528 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 581.435 235.154 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 581.435 266.780 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 581.435 298.406 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 581.435 330.032 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 581.435 361.658 13.014 15.303 4 4 text ">" textfont UI_FONT_NORMAL textscale .26 textaligny 12 forecolor .82 .64 .31 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ }
+ menuDef {
+ name "rfg_launcher_join" rect 0 0 640 480 4 4 fullScreen 0 popup
+ focusColor 1 .84 .42 1
+ onESC { close rfg_launcher_join; }
+ itemDef { decoration visible 1 rect 0.000 0.000 640.000 480.000 4 4 style WINDOW_STYLE_SHADER background "white" forecolor 0 0 0 .78 }
+ itemDef { decoration visible 1 rect 137.799 142.827 364.402 188.735 4 4 style WINDOW_STYLE_SHADER background "white" forecolor .035 .035 .027 1 }
+ itemDef { decoration visible 1 rect 137.799 142.827 364.402 1.020 4 4 style WINDOW_STYLE_SHADER background "white" forecolor .85 .66 .30 1 }
+ itemDef { decoration visible 1 rect 157.703 159.150 344.498 15.303 4 4 text "JOIN THROUGH THE LAUNCHER" textfont UI_FONT_NORMAL textscale .34 textaligny 12 forecolor .93 .78 .44 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 157.703 198.937 336.842 15.303 4 4 text "The launcher provides a fresh, verified connection." textfont UI_FONT_NORMAL textscale .24 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef { decoration visible 1 rect 157.703 219.341 336.842 15.303 4 4 text "Return to the launcher, then press PLAY to join." textfont UI_FONT_NORMAL textscale .24 textaligny 12 forecolor .88 .86 .79 1 textstyle ITEM_TEXTSTYLE_SHADOWED }
+ itemDef {
+  name "return_launcher" visible 1 rect 157.703 272.901 204.785 29.586 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "RETURN TO LAUNCHER" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor return_launcher backcolor .68 .49 .17 .26; setitemcolor return_launcher bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor return_launcher backcolor .68 .49 .17 0; setitemcolor return_launcher bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; exec "quit"; }
+ }
+ itemDef {
+  name "cancel_join" visible 1 rect 373.971 272.901 101.435 29.586 4 4 type ITEM_TYPE_BUTTON
+  style WINDOW_STYLE_FILLED backcolor .68 .49 .17 0 border 1 bordersize .6 bordercolor .85 .66 .3 0
+  text "CANCEL" textfont UI_FONT_NORMAL textscale .3 textalignx 8 textaligny 20
+  forecolor .84 .80 .67 1 textstyle ITEM_TEXTSTYLE_SHADOWED 
+  mouseEnter { play "mouse_over"; setitemcolor cancel_join backcolor .68 .49 .17 .26; setitemcolor cancel_join bordercolor .85 .66 .3 .85; }
+  mouseExit { setitemcolor cancel_join backcolor .68 .49 .17 0; setitemcolor cancel_join bordercolor .85 .66 .3 0; }
+  action { play "mouse_click"; close rfg_launcher_join; }
+ }
+ }
+
+
+
+
+	menuDef 
+	{
+		name "player_profile_ingame_warning"
+		visible 0
+		fullscreen 0
+		//rect 217 200 210 85
+		rect 204 160 235 135
+		focusColor GLOBAL_FOCUSED_COLOR
+		style 1
+		border 1
+		popup
+		onESC { close player_profile_ingame_warning; }
+
+		itemDef 
+		{
+			name window
+			group grpControlbutton
+			rect 0 2 235 135
+			style WINDOW_STYLE_FILLED
+			border 1
+			bordercolor .5 .5 .5 .5
+			forecolor 1 1 1 1
+			backcolor 0 0 0 .5
+			visible 0
+			decoration
+		}
+
+		itemDef 
+		{
+			name backimage2fade
+			style WINDOW_STYLE_SHADER
+			rect -332 -162 896 484
+	 		background "white"
+			forecolor 0 0 0 0.3
+			backcolor 0 0 0 0.3
+			visible 1
+			decoration
+		}
+	
+		itemDef 
+		{
+			name window2
+			group grpControlbutton
+			rect 2 3 231 20	
+			style WINDOW_STYLE_FILLED
+			border 1
+			bordercolor .1 .1 .1 .2
+			forecolor 1 1 1 1
+			backcolor 1 1 .3 .3
+			visible 0
+			decoration
+		}
+		itemDef 
+		{
+			name backimage2fade
+			style WINDOW_STYLE_SHADER
+			rect -150 2 535 150
+	 		background "popmenu_bg"
+//			forecolor 0 0 0 0.4
+//			backcolor 0 0 0 0.4
+			visible 1
+			decoration
+		}
+		itemDef 
+		{
+			name backimage2fade
+			style WINDOW_STYLE_SHADER
+			rect -50 20 335 24
+	 		background "popmenu_goldline"
+//			forecolor 0 0 0 0.4
+//			backcolor 0 0 0 0.4
+			visible 1
+			decoration
+		}
+
+		itemDef 
+		{
+			name confirm
+			text "@MENU_QUIT_CURRENT_GAME" 
+			style 0
+			textscale HEADER_SIZE 
+			textstyle ITEM_TEXTSTYLE_SHADOWED
+			rect 126 25 110 20
+			textalign 1
+			textalignx -7
+			textaligny 5
+			decoration
+			forecolor		POPMENU_HEADER_COLOR
+			visible 1
+		}
+		itemDef 
+		{
+			text "@MENU_CANT_SWITCH_PROFILES_INGAME"
+			type 1
+			textscale .3
+			style UI_BUTTON_STYLE
+			textfont UI_FONT_NORMAL
+			textstyle UI_BUTTON_TEXT_STYLE
+			rect 70 35 100 17
+			textalign 1
+			textalignx 50
+			textaligny 19
+			forecolor UI_BUTTON_TEXT_COLOR
+			backcolor UI_BUTTON_BACK_COLOR 
+			border UI_BUTTON_BORDER
+			bordercolor UI_BUTTON_BORDER_COLOR
+			visible 1
+			decoration
+		}
+		itemDef 
+		{
+			name		yes
+			text		"@MENU_YES"
+			type		1
+			textscale	.45
+			style		UI_BUTTON_STYLE
+			textfont	UI_FONT_NORMAL
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		90 65 60 30
+			textalign	1
+			textalignx	29
+			textaligny	21
+			forecolor	UI_BUTTON_TEXT_COLOR
+//			backcolor	UI_BUTTON_BACK_COLOR 
+			visible		1
+//			border		UI_BUTTON_BORDER
+//			bordercolor	UI_BUTTON_BORDER_COLOR
+
+			action
+			{ 
+				play "mouse_click";
+				exec "disconnect";
+			}
+			mouseEnter { play "mouse_over";  } 
+//			mouseExit { setitemcolor yes backcolor UI_BUTTON_BACK_COLOR } 	
+		}
+
+		itemDef 
+		{
+			name		no
+			text		"@MENU_NO"
+			type		1
+			textscale	.45
+			style		UI_BUTTON_STYLE
+			textfont	UI_FONT_NORMAL
+			textstyle	ITEM_TEXTSTYLE_SHADOWED
+			rect		91 105 60 30
+			textalign	1
+			textalignx	29
+			textaligny	21
+			forecolor	UI_BUTTON_TEXT_COLOR
+//			backcolor	UI_BUTTON_BACK_COLOR 
+			visible		1
+//			border		UI_BUTTON_BORDER
+//			bordercolor	UI_BUTTON_BORDER_COLOR
+
+			action
+			{ 
+				play "mouse_click"; 
+				close player_profile_ingame_warning ; 
+			}
+			mouseEnter { play "mouse_over";  } 
+//			mouseExit { setitemcolor no backcolor UI_BUTTON_BACK_COLOR } 		
+		}	
+
+	
+
+	}
+
+}

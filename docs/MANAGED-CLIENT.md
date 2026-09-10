@@ -1,3 +1,8 @@
+# Main menu mockup implemented in developer client (2026-09-10)
+
+See [MAIN-MENU.md](MAIN-MENU.md) for source, build, launcher-authenticated join
+behavior and pending visual acceptance. Public sequence4 unchanged.
+
 # Managed release build path privacy (2026-09-10)
 
 Managed C/C++ compile flags now map the source tree prefix to /build/cod2x with
