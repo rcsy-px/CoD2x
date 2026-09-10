@@ -1,3 +1,9 @@
+# Profile/options visual follow-up (2026-09-10)
+
+See MAIN-MENU.md: consistent background sizing, themed Options with preserved
+zPAM controls, multiplayer-settings backdrop. Final r4 pair staged to developer
+only; visual recheck pending. Public R2 sequence4 unchanged.
+
 # Main menu mockup implemented in developer client (2026-09-10)
 
 See [MAIN-MENU.md](MAIN-MENU.md) for source, build, launcher-authenticated join

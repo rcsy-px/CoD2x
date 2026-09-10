@@ -1,3 +1,37 @@
+# Profile/options follow-up (2026-09-10)
+
+User liked the main-menu preview; reported profile background widening, old Options
+art and low multiplayer-settings contrast. Follow-up staged to developer only:
+
+- background.menu uses rect 0 0 640 480 4/4 instead of stock -128 0 896 480;
+  this matches main_text when player_profile closes the foreground menu.
+- rfg_options.menu uses the same map-table background, gold hover/focus, existing
+  logo and restrained header/footer lines; left settings get a dark panel.
+- options_multi.menu gets a local dark panel below its native controls.
+
+Preserve native setting positions, all original actions and profile behavior.
+IMPORTANT: zpam408.iwd overrides ui_mp/options.menu. Use its original reviewed
+inspection source (.tmp-zpam-inspect/zpam408.iwd), keeping options_zpam and its
+extra controls. The latest stock iw_15 menus.txt routes just that one loadMenu to
+ui_mp/rfg_options.menu; it otherwise preserves the full stock menu list. Native
+menu names remain unchanged, so submenu close/apply/escape scripts still work.
+Multiplayer source also comes from latest iw_15, not older iw_06. No runtime
+profiles/configs are packaged; builder uses only explicit tracked menu sources.
+
+FINAL artifact build/mainmenu-settings-20260910-r4/iw_CoD2x_01.iwd:
+17 members,5,401,407bytes; IWD SHA256
+8137f40290283052a01bbe476562adb101d326fd50f705c76beb3cce71fdfdf4;
+DLL SHA256 2a0eb7ae0b79dd96c755f36dc4a77b14eaea6c4ce72caae270065ab990a25d53.
+Earlier follow-up builds are superseded and were never staged. Matching final
+DLL/IWD/policy staged only to fixed developer game; prior pair preserved under
+cod2/.build/client-workspace/before-mainmenu-settings-20260910.
+Build, archive integrity, menu brace checks, exact preservation of settings actions
+and latest menu-list routing checks pass. Managed/reset regressions pass.
+Developer launcher reopened; in-game visual follow-up acceptance is pending.
+Public R2 sequence4 and live/dev game services unchanged.
+
+---
+
 # Reforged client main menu
 
 Implemented 2026-09-10 for the isolated developer client only. User mockup:

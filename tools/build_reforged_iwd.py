@@ -24,7 +24,8 @@ def main():
         entries[name]=(ROOT/'src/reforged-assets'/name).read_bytes()
     # Explicit source overrides only: no wildcard/runtime directory packaging.
     art=ROOT/'src/reforged-assets/mainmenu'
-    entries['ui_mp/main.menu']=(ROOT/'src/reforged-assets/ui_mp/main.menu').read_bytes()
+    for menu in ['main.menu','background.menu','rfg_options.menu','options_multi.menu','menus.txt']:
+        entries['ui_mp/'+menu]=(ROOT/'src/reforged-assets/ui_mp'/menu).read_bytes()
     template=(art/'material.template').read_bytes()
     if template.count(b'rfg_rank')!=2: raise ValueError('Unexpected UI material template')
     for name,source,size in [('rfg_mnbg','background.png',(2048,1024)),('rfg_mnlg','logo.png',(512,256))]:
